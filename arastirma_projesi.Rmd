@@ -1,0 +1,1310 @@
+---
+title: '**İstanbul İlçe Bazında Aylık Doğalgaz Tüketim Tahmini**'
+author:
+- Satıgül ÖZTÜRK 121519044
+- Emre TORTUMLU 121519063
+- Feyza Yağmur MUMCU 121519012
+- İrem Gözde HACI 121519015
+date: "3 TEMMUZ 2023"
+output:
+  html_document:
+    toc: yes
+    always_allow_html: true
+  pdf_document:
+    latex_engine: pdflatex
+    toc: yes
+  includes:
+    in_header: preamble.tex
+  word_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage 
+
+## TEŞEKKÜRLER ##
+
+Lisans eğitimimiz boyunca değerli bilgilerini esirgemeyen Prof. Dr. Müjgan Tez, 
+tez sürecinde bizlere desteklerini esirgemeyen Prof. Dr. Birsen Eygi Erdoğan ve bölüm başkanımız
+Prof. Dr. Deniz İnan hocalarımıza sonsuz teşekkürler.
+
+\newpage 
+
+## ÖZET ##
+
+Doğalgaz, diğer gelişmiş ve gelişmekte olan ülkelerde olduğu gibi ülkemiz ekonomisinin en önemli girdilerinden olup aynı zamanda hane halkının ısınma
+ihtiyacını karşılayan temel enerji kaynağıdır. Doğalgaz temini noktasında tamamen dışa bağımlı bir politika
+izleyen ve doğalgaz stok kapasitesi toplam tüketiminin ancak %5 ini karşılayan ülkemiz için tüketilen doğalgaz miktarının tahmini, 
+son derece önemlidir. Ülkemizde enerji arz kaynaklarının çeşitlendirilmesi amacıyla ithal
+edilmeye başlanan doğalgazın yıllık tüketimi 50 milyar metreküp seviyelerine yaklaşmış ve Türkiye
+birincil enerji kaynakları pastasındaki en büyük paya sahip hale gelmiştir. Doğalgazın, sanayi sektörünün en önemli 
+enerji girdisi olması, ulusal elektrik üretiminin yaklaşık yarısının kaynağını teşkil etmesi, 
+ısınma ihtiyacını karşılayan temel yakıt olması gibi gerçekleri arkasına alarak son yıllarda hızla artan önemini perçinlemesi 
+ve dünya genelindeki artışa da paralel olarak ülkemizdeki doğal gaz tüketiminin daha da ileri seviyelere gideceği beklenmektedir.
+Bu noktada, gerek makroekonomik düzeyde yapılacak planlamalara esas teşkil etmesi gerekse arz güvenliğinin sağlanması hususlarında
+ülkemizin gelecek yıllardaki doğal gaz tüketiminin doğru şekilde tahmin edilebilmesi büyük önem taşımaktadır. Bu çalışmada enerji kaynağı olarak doğalgazın
+İstanbul'daki tüketim değerleri incelenmiş, Durağan Olmayan Doğrusal Stokastik Model (ARIMA Modeli) kullanılarak İstanbul’un gelecek aylardaki ve mevsimsel
+dönemlerdeki doğal gaz tüketimi tahmin edilmeye çalışılmıştır. 
+Veriler 2015 yılı ile 2023 Nisan ayı ve 2022 abone sayılarını kapsamaktadır. 
+İstanbul İlçe Bazında Aylık Doğalgaz Tüketim verileri ve Abone Sayıları İstanbul Büyükşehir Belediyesi Açık Veri Portalından tedarik edilmiştir.
+
+\newpage 
+
+## ABSTRACT ##
+
+Natural gas, like in other developed and developing countries, is one of the most important inputs to our country's economy and serves as the primary energy
+source for meeting household heating needs. For our country, which follows a completely dependent policy in terms of natural gas supply and where the natural
+gas stock capacity covers only 5% of total consumption, estimating the amount of natural gas consumed is of great importance. With the aim of diversifying
+energy supply sources in our country, the annual consumption of imported natural gas has approached the level of 50 billion cubic meters, and Turkey has become
+the largest share in the pie of primary energy sources. Taking into account the fact that natural gas is the most important energy input in the industrial
+sector, constitutes about half of the national electricity generation, and serves as the primary fuel for meeting heating needs, it is expected that its 
+importance, which has rapidly increased in recent years, will continue to rise in parallel with the global increase, and natural gas consumption in our 
+country will reach even higher levels. At this point, it is of great importance for our country to be able to accurately predict the future natural gas 
+consumption in the coming years, both in terms of serving as the basis for macroeconomic planning and ensuring supply security. In this study, 
+the consumption values of natural gas in Istanbul as an energy source were examined, and the Non-Stationary Linear Stochastic Model (ARIMA Model) was used to 
+attempt to predict the natural gas consumption in Istanbul in the coming months and seasonal periods. The data covers the period from 2015 to April 2023 and 
+the subscriber numbers for 2022. The Istanbul District-based Monthly Natural Gas Consumption data and Subscriber Numbers were obtained from the Istanbul 
+Metropolitan Municipality Open Data Portal.
+
+\newpage 
+
+## GİRİŞ ##
+
+Havayı kirletmeyen, petrol ve katı yakıtla kıyaslandığında çevre dostu bir enerji kaynağı olan doğalgaz,
+yüksek yanma verimi, kolaylıkla depolanabilir olması, kurum ve is gibi atık madde bırakmaması, kontrol edilebilir bir enerji kaynağı olması
+ve fiyat avantajlarından dolayı, başta ısınma olmak üzere, elektrik üretimi ve sanayide birçok alanda kullanılmaktadır. 
+Çevre dostu olan bu enerji kaynağının temini noktasında tamamen dışa bağımlı bir politika izleyen Türkiye, 
+doğalgaz ihtiyacının büyük bölümünü boru hatları yardımıyla Rusya, İran ve Azerbaycan’dan karşılamaktadır. 
+Ayrıca Marmara Ereğlisi'ne Nijerya ve Cezayir'den gemilerle sıvılaştırılmış doğal gaz (LNG) tedarik edilmektedir.
+Doğalgazın çıkarıldığı kaynaktan tüketim noktalarına nakli, uluslararası antlaşmalarla güvence altına alınmasına karşın çeşitli nedenlerle,
+doğalgaz ithal edilen ülkelerden gelen doğalgaz akışı kesilebilmekte ve bunun sonucunda özellikle kış aylarında konutlarda ısınma ve sanayide 
+üretimin durması gibi problemler yaşanmaktadır.
+Doğalgaz tüketim tahmininde dorğusal regresyon ve zaman serileri kullanılmaktadır. 
+Geçmiş dönemlere ilişkin gözlem değerleri yardımıyla geleceğe yönelik tahminler yapmayı amaçlayan zaman serisi modelleri tıp, mühendislik, 
+işletme, ekonomi ve finans gibi birçok alanda yaygın bir şekilde kullanılmaktadır. 
+Zaman serileri yardımıyla tahmin yapmak için değişik yöntemler kullanılarak oluşturulan farklı modeller bulunmaktadır.
+Bu modeller arasında en çok bilinen ve yaygın olarak kullanılan ARIMA modelleridir. 
+Seriyi oluşturan veriler arasında doğrusal bir ilişkinin olduğunu varsayan ve bu doğrusal ilişkiyi modelleyebilen 
+ARIMA modelleri durağan ya da çeşitli istatistiksel yöntemlerle durağan hale getirilen zaman serilerine başarıyla uygulanabilmektedir.
+Bu çalışmada ise İstanbul iline ilişkin ilçelere ait aylık doğalgaz tüketimi tahmin edilmeye çalışılmıştır. 
+Bu amaçla zaman serileri kullanılarak tahmin modelleri oluşturulmuş aylık ve mevsimsel veriler kullanılarak kısa dönemli tahmin sonuçları elde edilmiştir.
+Ayrıca, 2022 yılı için İstanbul'a ait İstanbul Büyükşehir Belediyesi Açık Veri Portalından alınan abone sayıları verilerine göre ayrı bir çalışma yapılmıştır.
+
+\newpage 
+
+# **BÖLÜM 1** 
+
+## *1.1 Doğalgaz Tüketimi* 
+
+### *1.1.1 Doğalgaz Nedir?* 
+
+Fosil yakıtlar grubundan hidrokarbon esaslı doğalgaz, yer altında gözenekli kayaların boşluklarına sıkışmış olarak 
+yada petrol yataklarının üzerinde gaz halinde büyük hacimler şeklinde bulunur.
+Doğalgaz; %95 metan, az miktarda da etan, propan atom, bütan ve karbondioksitten oluşan renksiz, kokusuz ve havadan hafif bir gazdır.
+Doğalgaz kokusuz olduğundan kaçakların farkedilebilmesi için özel olarak kokulandırılır.
+Bu amaçla THT(tetra hidro teofen) ve / veya TBM (tersiyer bütil merkaptan) kullanılır. 
+Karışımın içinde %95 yada daha yüksek bulunan metan gazının özelliği kimyasal yapısı en basit ve karbon içeriği en düşük olan hidrokarbon 
+gazı olmasıdır. Metan molekülü 1 karbon 4 hidrojen atomundan oluşur.
+Kimyasal yapısının basit olması nedeniyle yanma işlemi kolaydır ve tam yanma gerçekleşir.
+Dolaysıyla; duman, is,kurum,ve kül oluşturmaz. Yanması en kolay ayarlanabilen ve yanma verimliliği en yüksek olan yakıttır. 
+Bu özelliği kullanım kolaylığı ve ekonomisi sağlar. Karbon içeriğinin düşük olması nedeniyle atmosferde sera etkisi oluşturan ve 
+insan sağlığı bakımından zehirleyici olan karbondioksit gazı emisyonu, katı yakıtlara göre 1/3 ve sıvı yakıtlara göre 1/2 oranındadır.
+
+### *1.1.2 Doğalgaz Tüketiminin Önemi*
+
+Doğalgaz kullanımı itibariyle hem kömürden hem de petrolden çok daha kolaydır. 
+Diğer enerji kaynaklarına göre çok daha temiz olan ve çevreye kirlilik yaymayan doğal gaz, 
+devletler için önemli bir enerji kaynağı haline gelmiştir.
+Enerjinin çağdaş uluslararası sistemdeki yeri ve insanların gündelik yaşamındaki önemi çok büyüktür. 
+İnsanların evlerindeki kullandıkları elektrikten, sokaklarda kullandıkları arabaya kadar hepsi için enerji gerekmektedir. 
+Dünya’mız üzerindeki enerji talebini çok fazla arttırmıştır.
+Ancak talep ve arz arasındaki dengesizlik bu enerjinin paylaşımı konusunda bazı sorunlara neden olmaktadır.
+Talep ve arz arasında yaşanan dengesizliğin en önemli ürünleri ise yine petrol, doğalgaz ve kömürdür.
+2023 yılında bile bu üç enerji kaynağı, dünya enerji talebinin %80’ini karşılamaktadır. 
+Bu kaynakların Dünya çapındaki enerji ihtiyacının %80'inini karşılamasının yanında, enerji kaynaklarının kıtlığını da
+eklersek bu kaynakların kullanım amaçlarının ne kadar önemli olduğu görülmektedir.
+Son zamanlarda yaşanan Rusya-Ukrayna arasındaki gerginliğin ülkemizdeki doğalgaz kullanımını büyük ölçüde etkilemiştir.
+
+### *1.1.3 Kontrollü Doğalgaz Tüketimi* 
+
+Doğal gaz, sınırlı bir kaynak olduğu için sürdürülebilir bir şekilde kullanılmalıdır.
+Kontrollü tüketim, doğalgazın gelecek nesillere de sağlanabilmesini ve kaynakların sürdürülebilir bir şekilde kullanılmasını sağlar.
+
+*_İyi Yalıtım_*: Ev veya işyerinin iyi yalıtılmış olması, ısı kaybını azaltarak doğalgaz tüketimini düşürebilmektedir. 
+Pencere, kapı, çatı ve duvarların izole edilmiş olması ısı kayıpları minimuma indirir ve enerji verimliliğini arttırır.
+
+*_Enerji Verimli Isıtma Cihazları_*: Eski ve verimsiz ısıtma cihazları yerine, modern ve enerji verimli modeller kullanılmalıdır.
+Yeni nesil kazanlar, kombi sistemleri ve ısı pompaları daha az doğalgaz tüketir ve enerji verimliliğini artırır.
+
+*_Sıcak Su Kullanımı_*: Sıcak su tüketimini kontrol altında tutmak önemlidir. 
+Daha kısa duş almak, muslukları sıkıca kapatmak ve sıcak su kullanımını gereksiz yere azaltmak enerji tasarrufuna yardımcı olmaktadır.
+
+*_Enerji Verimli Cihazlar_*: Doğalgazla çalışan cihazları seçerken enerji verimliliği sağlayan araçlar tercih edilmelidir.
+
+*_Düzenli Bakım_*: Doğalgazla çalışan cihazların düzenli bakımını yaptırmak, performanslarını ve verimliliklerini artırır.
+Böylece, enerji israfını önler ve tüketimi kontrol altında tutar.
+
+
+### *1.1.4 Doğalgaz Tüketimini Etkileyen Faktörler* 
+
+Doğalgaz tüketimi birçok farklı faktörden dolayı değişim gösterebilir. 
+
+*_Hava koşulları_*: İklim şartları doğalgaz tüketimini büyük ölçüde etkiler. Soğuk hava koşullarında, özellikle kış aylarında, doğalgaz tüketimi artar çünkü evlerin ve işyerlerinin ısıtılması için daha fazla enerjiye ihtiyaç duyulur.
+
+*_Bina izolasyonu_*: İyi bir bina izolasyonu, ısı kaybını önleyerek doğalgaz tüketimini azaltır. İyi yalıtımlı binalar, ısıyı daha iyi korur ve daha az enerjiyle ısınır, bu da doğalgaz tüketimini düşürmektedir.
+
+*_Bina tipi_*: Bina tipi doğalgaz tüketimini etkiler. Örneğin, apartman daireleri genellikle daha az doğalgaz tüketirken, müstakil evler daha fazla doğalgaz kullanabilir.
+
+*_Isıtma ve su ısıtma sistemleri_*: Kullanılan ısıtma ve su ısıtma sistemleri de doğalgaz tüketimini etkiler. Verimli ve modern sistemler, daha az doğalgaz kullanırken, eski ve verimsiz sistemler daha fazla doğalgaz tüketebilir.
+
+*_Endüstriyel kullanım_*: Doğalgaz, endüstriyel faaliyetlerde geniş çapta kullanılır. İşletmelerin büyüklüğü, sektörü ve faaliyetleri doğalgaz tüketimini etkileyebilir.
+
+*_Popülasyon yoğunluğu_*: Nüfus yoğunluğu da doğalgaz tüketimini etkiler. Yoğun nüfuslu bölgelerde daha fazla doğalgaz tüketimi olabilir.
+
+*_Ekonomik faktörler_*: Ekonomik durum da doğalgaz tüketimini etkiler. Ekonomik büyüme ve gelir seviyelerindeki değişiklikler, doğalgaz tüketiminde farklılıklara neden olabilir.
+
+*_Fiyatlar_*: Doğalgaz fiyatları, tüketicilerin tüketim düzeylerini etkileyen önemli bir faktördür. Düşük fiyatlar, tüketimi artırabilirken, yüksek fiyatlar tüketimi azaltabilir.
+
+*_Teknolojik gelişmeler_*: Daha verimli doğalgaz yakıt sistemleri ve cihazlar, tüketim düzeylerini etkileyebilir. Gelişmiş teknolojilerle daha az doğalgaz kullanımı sağlanabilir.
+
+*_Enerji politikaları ve teşvikler_*: Hükümetin enerji politikaları, teşvikler ve düzenlemeler, doğalgaz tüketimini etkileyebilir. Enerji verimliliğini artırmak veya alternatif enerji kaynaklarına yönlendirmek için yapılan politikalar, doğalgaz talebini değiştirebilir.
+
+
+### *1.1.5 Doğalgaz'ın İstanbul Serüveni* 
+
+Üst Isıl değeri maksimum 10.427 kcal/m3 minimum 8.100 kcal/m3 yoğunluğu yaklaşık olarak 0,72 kg/m3 olan doğal gaz, 
+Rusya'dan çıkartıldıktan sonra, Ukrayna, Moldova, Romanya ve Bulgaristan üzerinden boru hatlarıyla Türkiye'ye taşınır. 
+Malkoçlar Ölçüm ve Filtreleme İstasyonu'nda Türkiye'ye giren doğal gazın miktarının ölçülmesi ve filtrelenmesi işlemi yapılır.
+Malkoçlar ve Kırklareli Kompresör İstasyonları'nda basıncı 35 bara kadar düşmüş doğalgazın basıncı tekrar 70 bara çıkartılır. 
+Marmara Ereğlisi LNG İstasyonu'nda Cezayir ve Nijerya gibi ülkelerden gelen sıvılaştırılmış doğalgaz (LNG),
+gazlaştırılarak sisteme gaz halinde verilir.
+Esenyurt'taki RMS İstasyonu'nda İstanbul'a giren doğalgazın basıncı 70 bardan 20 bar seviyesine düşürülerek doğalgazın filtrasyonu, 
+ölçümlendirilmesi, gazın analizi, kokulandırılması ve ısıtılması işlemleri gerçekleştirilir. Buradan İstanbul-Avrupa yakasının doğalgaz
+dağıtımı yapılır.
+Marmara Denizi geçişi ile, yaklaşık 100 m derinlikte 106 km uzunluğunda 2 adet 30 inçlik boru ile doğalgaz.
+Avcılar Ambarlı'dan Pendik sahiline çıkarak İstanbul Anadolu yakasına taşınır.
+
+![ ](C:/Users/emre-/Downloads/kaynaktan_eve_dogal_gaz.jpg)
+
+\newpage 
+
+# **BÖLÜM 2**
+
+## *2.1 Kullanılan Yöntemler*
+
+Bu bölümde tüketim tahmini için kullanılan istatistiki teknikler açıklanacaktır.
+
+### *2.1.1 Eksik Gözlemlerin Kontrolü*
+
+Eksik gözlem, veri setindeki herhangi bir hücrede değer olmamasıdır.
+Bu sorunla karşılaşıldığında aşağıdaki tabloda verilen çözümleme stratejileri uygulanmaktadır.
+
+![ ](C:/Users/emre-/Downloads/eksik_veri.jpg)
+
+### *2.1.2 Korelasyon*
+
+İki değişken arasındaki ilişkinin gücünü ölçmek için korelasyon katsayılarının hesaplanması yaygındır.
+x ve y değişkenleri arasındaki korelasyon;
+
+$r = \frac{\sum (x_{t} - \bar{x})(y_{t}-\bar{y})}{\sqrt{\sum(x_{t}-\bar{x})^2}\sqrt{\sum(y_{t}-\bar{y})^2}}$
+
+Korelasyon katsayısı olan "r" her zaman -1 ile 1 arasındadır; negatif değerler negatif bir ilişkiyi belirtir ve pozitif değerler pozitif
+bir ilişkiyi gösterir.
+Aşağıdaki şekilde grafikler, farklı korelasyon seviyelerine sahip veri setlerinin örneklerini göstermektedir. 
+
+![ ](C:/Users/emre-/Downloads/korelasyon.jpg)
+
+### *2.1.3 Logaritmik Dönüşüm*
+
+Logaritmik dönüşüm, her x değişkenini bir log(x) ile değiştirdiği bir veri dönüştürme yöntemidir.
+Doğal logaritma “ln” olarak gösterilir.
+Logaritmik dönüşümün amacı, verilerin normal dağılım özelliklerini iyileştirmek veya değişkenler arasındaki ilişkiyi düzleştirmektir.
+Pozitif değere sahip değişkenler üzerinde uygulanır.
+Logaritmik dönüşüm, özellikle sağa çarpık dağılımlara sahip verilerde yaygın olarak kullanılır. 
+Sağa çarpık bir dağılım, ortalamadan daha büyük değerlere doğru uzayan bir kuyrukla karakterizedir. Bu tür verilerde logaritmik
+dönüşüm uygulandığında, 
+veri noktaları daha simetrik bir dağılıma yaklaşır ve analizler için daha uygun hale gelir.
+
+![ ](C:/Users/emre-/Downloads/logaritmik_donusum.png)
+
+### *2.1.4 Beyaz Gürültü*
+
+Otokorelasyon göstermeyen zaman serilerine beyaz gürültü denir. 
+Beyaz gürültü serileri için her bir otokorelasyonun sıfıra yakın olması beklenmektedir.
+
+![ ](C:/Users/emre-/Downloads/white_noise.png)
+
+![ ](C:/Users/emre-/Downloads/beyaz_gurultu_otokorelasyon.jpg)
+
+Beyaz gürültü serisi için, ACF’deki ani artışların % 95’inin ±2/
+$\sqrt{T}$ aralığında olmasını
+bekliyoruz; burada T, zaman serisinin uzunluğudur. Bu sınırları ACF’nin bir grafiğinde (yukarıdaki mavi
+kesikli çizgiler) çizmek yaygındır. Bir veya daha fazla büyük sivri uç bu sınırların dışındaysa veya sivri
+uçların önemli ölçüde % 5’inden fazlası bu sınırların dışındaysa, seri muhtemelen beyaz gürültü değildir.
+
+### *2.1.5 Dinamik Regresyon*
+
+Tek değişkenli zaman serileri analizinde başka değişkenlerin katkısı ile bir model kurmaya izin veren ARIMA modellerinin genişletilmiş halidir.
+Dinamik regresyon modelleri, genellikler otoregresif (AR) veya hareketli ortalama (MA) terimlerini içeren zaman serisi modelleridir.
+AR terimleri, geçmiş dönem değerlerinin mevcut dönem değerini tahmin etmede kullanılmasını sağlar.
+MA terimleri ise, geçmiş hataların mevcut dönem değerini tahmin etmede kullanılmasını sağlar.
+Bu terimler, modelin zaman içindeki değişkenlikleri ve trendleri yakalamasına yardımcı olur.
+
+$$y_t = \beta_0 + \beta_1 x_{1,t} + \dots + \beta_k x_{k,t} + \varepsilon_t,$$
+
+$y_t$ : Mevcut dönemde tahmin edilmek istenen bağımlı değişkenin değerini temsil eder.
+
+$x_{1,t},...,x_{k,t}$ : Mevcut dönemdeki bağımsız değişkenleri temsil eder.
+
+$\beta_0 + \beta_1 + \dots + \beta_k$ : Regresyon katsayılarıdır. Modelin tahmin edilen değişken üzerindeki etkisini gösterir.
+
+$\varepsilon_t$ : Hata terimidir. Gözlemlenen değer ile tahmin edilen değer arasındaki farkı temsil eder.
+
+### *2.1.6 Durağanlık ve Fark Alma* 
+
+Durağan olmayan serilerle analiz, tahmin ve öngörüde bulunmak tutarsızve yanlı sonuçlara neden olur.
+Zaman serilerini modelleyebilmek için serilerin durağan olması, değilse durağanlaştırılması gerekir.
+Zaman serisi verilerinin belirli bir zaman sürecinde sürekli artma veyaazalmanın olmadığı, verilerin zaman boyunca bir yatay eksen
+boyunca saçılım gösterdiği biçimde tanımlanır.
+Genel bir tanımlama ile, sabit ortalama, sabit varyans ve seriye ait ikideğer arasındaki farkın zamana değil, yalnızca iki zaman değeri
+arasındaki farka bağlı olması şeklinde ifade edilir. Kısaca; Bir zaman serisinde peş peşe gelen iki veri arasındaki fark,
+zamanın kendisinden kaynaklanmamakta sadece zaman aralığından kaynaklanmakta ise durağanlık sözkonusudur. Bu nedenle,
+trendleri olan veya mevsimsellik içeren zaman serileri durağan değildir denir.
+
+Eğer bir zaman serisinin ortalaması, varyansı ve kovaryansı zaman boyunca sabit kalıyorsa, serinin durağan olduğu
+söylenebilir. Durağanlık durumu farklı testler ile test edilebilir. Bunların yanı sıra ACF ve PACF grafiklerine bakmanın 
+da durağanlık konusunda karar almada etkileri vardır.
+
+Fark alma ise durağınlığın saplanmadığı zamanlarda, uygulanan işlemlerden birisidir. 
+Zaman serisinde peşpeşe gelen verilerden son değerden bir önceki değerin çıkarılması ile yapılır.
+Fark alma işlemi ile trend ve mevsimsel dalgalanmalar yok edilebilmektedir. Ayrıca serideki değişimin yönünü de görebilmeye
+fırsat verir.(pozitif veya negatif yönü)
+
+![ ](C:/Users/emre-/Downloads/duraganlik_fark_alma.jpg)
+
+### *2.1.7 SARIMA*
+
+Mevsimsel eğilimleri modelleyebilmemizi sağlayan SARIMA modeli, ARIMA modelinin uyarlanmış bir versiyonudur..
+
+SARIMA modeli, ARIMA modelindeki mevsimsel olmayan bileşenlere (p,d,q) ek olarak, mevsimsel bileşenlere (P,D,Q,s) sahiptir.
+
+*_P_*: Mevsimsel AR (Autoregressive) modelinin otoregresif terim sayısıdır.
+
+*_D_*: Mevsimsel I (Integrated) modelinin fark derecesidir.
+
+*_Q_*: Mevsimsel MA (Moving Average) modelinin hareketli ortalama terim sayısıdır.
+
+*_s_*: Mevsimsel periyot uzunluğunu temsil eder.
+
+$$1 - \phi_1B - \phi_2B^2 - \ldots - \phi_pB^p)(1 - B)^d(Y_t - \mu) = (1 + \theta_1B + \theta_2B^2 + \ldots + \theta_qB^q)(1 - B)^D\epsilon_t$$
+
+$Y(t)$: Zaman serisinin t zamanındaki gözlem değerini temsil eder.
+
+$B$: Gecikme operatörünü simgeler.
+
+$\mu$: Zaman serisinin ortalamasını ifade eder.
+
+$\phi_1,\phi_2,\ldots,\phi_p$: Otoregresif (AR) terimlerin katsayılarıdır.
+
+$\theta_1,\theta_2,\ldots,\theta_q$: Hareketli ortalama (MA) terimlerin katsayılarıdır.
+
+$d$: Zaman serisinin fark derecesidir.
+
+$D$: Mevsimsel fark derecesidir.
+
+$\epsilon_t$: Zaman serisinin hatalarını temsil eder.
+
+ 
+### *2.1.8 ARIMA*
+
+ARIMA modeli, zaman serilerindeki trendleri, mevsimsellikleri ve durağanlık özelliklerini yakalamak için kullanılır.
+ARIMA modeli üç bileşenden oluşur:
+
+*_AR (AutoRegressive) bileşeni_*: Bu bileşen, geçmiş gözlemlerin lineer kombinasyonuyla mevcut gözlemi tahmin etmeye çalışır. AR bileşeni, bir zaman serisindeki geçmiş değerlerin etkisini modellemek için otoregresif terimler kullanır.
+
+*_I (Integrated) bileşeni_*: Bu bileşen, zaman serisinin durağanlık düzeyini yakalamak için gerekli olan fark operasyonlarını ifade eder. İntegrasyon, zaman serisindeki trendin kaldırılmasını sağlar ve veriyi durağan hale getirir.
+
+*_MA (Moving Average) bileşeni_*: Bu bileşen, geçmiş tahmin hatalarının lineer kombinasyonuyla mevcut gözlemi tahmin etmeye çalışır. MA bileşeni, bir zaman serisindeki geçmiş tahmin hatalarının etkisini modellemek için hareketli ortalama terimlerini kullanır.
+
+ARIMA(p, d, q) formülüyle gösterilen bir ARIMA modelinde:
+
+*_p_*: AR bileşenin derecesini temsil eder. AR bileşeninde kaç adet otoregresif terim olduğunu belirtir.
+
+*_d_*: İntegrasyon derecesini temsil eder. İntegrasyon, trendin kaldırılması için kaç defa fark alındığını belirtir.
+
+*_q_*: MA bileşenin derecesini temsil eder. MA bileşeninde kaç adet hareketli ortalama terimi olduğunu belirtir.
+
+
+$$Y(t) = c + \phi_1 Y(t-1) + \phi_2 Y(t-2) + \ldots + \phi_p Y(t-p) - \theta_1 \varepsilon(t-1) - \theta_2 \varepsilon(t-2) - \ldots - \theta_q \varepsilon(t-q) + \varepsilon(t)$$
+
+$Y(t)$: Mevcut zaman noktasındaki gözlem değeridir.
+
+$c$: Sabit terimdir.
+
+$\phi_1 , \phi_2 , \ldots , \phi_p$ : AR terimlerinin katsayılarıdır.
+
+$\varepsilon(t-1) , \varepsilon(t-2) , \ldots , \varepsilon(t)$ : MA terimlerinin hatalarıdır.
+
+R’deki auto.arima() fonksiyonu, bir ARIMA modeli elde etmek için birim kök testlerini, AICc ve MLE’nin
+en aza indirilmesini birleştiren Hyndman-Khandakar algoritmasının (Hyndman & Khandakar, 2008) bir
+varyasyonunu kullanır. auto.arima() opsiyonları, algoritmanın birçok varyasyonunu sağlar.
+
+Otomatik ARIMA modellemesi için Hyndman-Khandakar algoritması şu şekildedir:
+
+$1)$ Önce birim kök testleri uygulanarak kaç fark alınacağı belirlenir. (0 $\leq$ d $\leq$ 2)
+
+$2)$ Daha sonra AICc yi minimum kılacak olan model ve parametre tahminleri belirlenir. Bu minimizasyom yapılırken arama uzayını daraltabilmek için algoritme
+adımsal bir yaklaşım kullanır.
+
+$a)$ 4 başlangıç modeli fit edilir.
+
+ARIMA(0,d,0)
+
+ARIMA(2,d,2)
+
+ARIMA(1,d,0)
+
+ARIMA(0,d,1)
+
+d=2 durumu dışında modeller sabit terim içerir. d $\leq$ 1 ise ayrıca sabit terim içermeyen
+ARIMA(0,d,0) modeli de fit edilir.
+
+$b)$ a adımında belirlenen modellerden en küçük AICc değerine sahip olan model
+mevcut model olarak seçilir.
+
+$c)$ mevcut modelin çeşitli varyasyonları denenir.
+
+### *2.1.9 AUTO ARIMA*
+
+R’deki auto.arima() fonksiyonu, bir ARIMA modeli elde etmek için birim kök testlerini, AICc ve MLE’nin
+en aza indirilmesini birleştiren Hyndman-Khandakar algoritmasının (Hyndman & Khandakar, 2008) bir
+varyasyonunu kullanır. auto.arima() opsiyonları, algoritmanın birçok varyasyonunu sağlar.
+
+Otomatik ARIMA modellemesi için Hyndman-Khandakar algoritması şu şekildedir:
+
+$1)$ Önce birim kök testleri uygulanarak kaç fark alınacağı belirlenir. (0 $\leq$ d $\leq$ 2)
+
+$2)$ Daha sonra AICc yi minimum kılacak olan model ve parametre tahminleri belirlenir. Bu minimizasyom yapılırken arama uzayını daraltabilmek için algoritme
+adımsal bir yaklaşım kullanır.
+
+$a)$ 4 başlangıç modeli fit edilir.
+
+ARIMA(0,d,0)
+
+ARIMA(2,d,2)
+
+ARIMA(1,d,0)
+
+ARIMA(0,d,1)
+
+d=2 durumu dışında modeller sabit terim içerir. d $\leq$ 1 ise ayrıca sabit terim içermeyen
+ARIMA(0,d,0) modeli de fit edilir.
+
+$b)$ a adımında belirlenen modellerden en küçük AICc değerine sahip olan model
+mevcut model olarak seçilir.
+
+$c)$ mevcut modelin çeşitli varyasyonları denenir.
+
+### *2.1.10 Decomposition*
+
+Bir şeyin parçalara ayrılması veya dağılması anlamına gelir.
+İstatistiksel yöntemlerde, karmaşık bir sorunu daha küçük, daha yönetilebilir parçalara bölme sürecini ifade eder.
+Bu, problemin çözülmesini daha kolay hale getirebilir ve daha verimli bir şekilde programlama veya tasarım yapmayı sağlayabilir.
+Bir zaman serisinin trend, mevsimsellik ve düzensizlik bileşenlerine ayrıştırılması sürecini ifade eder. 
+Bu süreç, zaman serisindeki yapısal örüntüleri anlamak ve analiz etmek için kullanılır.
+
+### *2.1.11 Toplamsal Ayrıştırma Yöntemi*
+
+Trend, mevsimsellik ve hata bileşenlerinin toplanmasıyla oluşup şu şekilde formüle sahip modeldir:
+
+$$Z_t = T_t + M_t + \varepsilon_t$$ 
+Burada hata teriminin($\epsilon_t$) rasgele bir harekete sahip olması gerektiğine dikkat edilmelidir.
+
+### *2.1.12 Çarpımsal Ayrıştırma Yöntemi*
+
+rend, mevsimsellik bileşenlerinin çarpılması ve hata bileşeninin toplanmasıyla oluşup şu şekilde formüle sahip modeldir:
+
+$$Z_t = T_t * M_t + \varepsilon_t$$
+
+Bu yöntemin uygulanışı bazı noktalarda toplamsal ayrıştırma yönteminden farklılık gösterir ama temel mantık olarak bu iki model
+arasında pek bir farklılık yoktur.
+
+$Z(t)$: Zaman serisinin t zamanındaki gözlem değerini temsil eder. Yani, t zamanındaki gerçek veri noktasını ifade eder. 
+
+$T(t)$: Trend bileşenini temsil eder. Trend, zaman serisinin genel eğilimini ifade eder.
+Trend bileşeni, zamanla değişen düzenli bir modeli yansıtır. 
+
+$M(t)$: Mevsimsellik (seasonality) bileşenini temsil eder. Mevsimsellik, belirli bir periyotta tekrar eden yapısal desenleri yansıtır.
+Bu desenler genellikle yılın mevsimleri veya aylar gibi düzenli periyotlarda ortaya çıkar.
+
+$\varepsilon_t$: Hata veya düzensizlik bileşenini temsil eder. Hata bileşeni, trend ve mevsimsellik bileşenlerinin dışında kalan
+rastgele varyasyonları ifade eder. Bu bileşen, zaman serisindeki beklenmeyen olaylar, geçici etkiler veya diğer faktörler nedeniyle 
+meydana gelen dalgalanmaları temsil eder.
+
+### *2.1.13 Hareketli Ortalamalı Modeller*
+
+Hareketli ortalamalı modeller, zaman serisindeki düzenli desenleri ve trendleri yakalamak için hareketli ortalamaları kullanır.
+Hareketli ortalama, belirli bir zaman dilimindeki değerlerin ortalamasını hesaplayan bir yöntemdir.
+Bu ortalama, zaman serisinin düzleştirilmesini sağlar ve gürültülü veri noktalarının etkisini azaltır.Hareketli ortalamalı modeller,
+trend ve mevsimsellik desenlerini yakalamak ve düzensizlik bileşenini azaltmak için kullanılır. 
+Yaygın olarak kullanılan hareketli ortalamalı modeller arasında Basit Hareketli Ortalama (Simple Moving Average - SMA) 
+ve Ağırlıklı Hareketli Ortalama (Weighted Moving Average - WMA) bulunur.
+
+
+##### *_Basit Hareketli Ortalama_*:
+Her veri noktasını eşit bir ağırlıkla değerlendirir.
+Belirli bir zaman dilimindeki değerlerin toplamının, o zaman dilimindeki veri noktalarının sayısına bölünmesiyle elde edilir.
+Zaman serisinin düzleştirilmesini sağlar ve gürültülü veri noktalarının etkisini azaltır. 
+Ayrıca, trendi belirlemek için kullanılabilir.
+SMA'nın kullanılmasıyla, zaman serisi daha yumuşak bir şekilde görüntülenir ve daha uzun vadeli eğilimlerin belirlenmesine yardımcı olur.
+
+$$SMA(_t) = X_(t_) + X_(t_-1_) + X_(t_-2_) + ... + X_(t_-n_+1_) / n$$  
+
+
+$SMA(_t)$: t zamanındaki basit hareketli ortalama değeridir.
+
+$X(_t)$: t zamanındaki gözlem değeridir.
+
+$n$: Kullanılan zaman aralığını belirtir.
+
+#### *_Ağırlıklı Hareketli Ortalama_*:
+
+Bu yöntem, zaman serisindeki gözlem değerlerine ağırlık vererek ortalamayı hesaplar.
+
+$$WMA(_t) = W1 * X_(t_) + W2 * X_(t_-1_) + ... + WN * X_(t_-n_+1_) / (w1+w2+w3+...Wn)$$  
+
+
+$WMA(_t)$: t zamanındaki ağırlıklı hareketli ortalama değeridir.
+
+$X(_t)$: t zamanındaki gözlem değeridir.
+
+$w1, w2, w3, ..., wn$: Her gözlem değeri için kullanılan ağırlıkları temsil eder.
+
+$n$: Kullanılan zaman aralığını belirtir.
+
+### *2.1.14 Eğilim Etkisi*
+
+Verilerin zamanla değişmesini veya trend göstermesi eğilimini ifade eder.Verilerin belirli bir yönde sürekli artması, azalması veya durağanlık eğilimine sahip olması durumunda ortaya çıkar.
+Eğilim etkisi, zaman serisinin genel davranışını ve gelecekteki trendlerin tahmin edilmesinde önemli rol oynar. Eğilim, genelde verideki uzun vadeli değişimleri ifade eder ve bu değişim, verinin doğrusal veya doğrusal olmayan bir modelle ifade edilebilir.
+Doğrusal eğilim durumunda, veriler düz bir çizgi boyunca artar veya azalır. Doğrusal olmayan eğilim durumunda ise, verilerin artış veya azalış hızı zaman içerisinde değişebilir.
+Eğilim etkisini anlamak, gelecekteki değerleri tahmin etmek ve zaman serisinin davranışını analiz etmek için önemlidir. Eğilimi dikkate alarak yapılan tahminler, trendin sürekliliğini ve gelecekteki olası değişiklikleri hesaba katmış olur.
+Eğilim çizgisi doğrusal regresyon analiziyle hesaplanabilmektedir. Doğrusal regresyon, zaman serisindeki eğilimi en iyi şekilde temsil eden doğruyu bulmayı hedeflemektedir.
+
+Doğrusal regresyon analizi için genel bir formül:
+
+$$Y = a + b * X$$
+$Y$: Zaman serisi verilerini temsil eden gözlemlenen değerler vektörüdür.
+
+$X$: zamanın geçmesine karşılık gelen bağımsız değişken vektörüdür.
+
+$a$: Doğrusal regresyon doğrusunun kesme noktasını (başlangıç noktasını) temsil eden sabittir.
+
+$b$: Doğrusal regresyon doğrusunun eğimini (eğilim etkisini) temsil eden katsayıdır.
+
+Not: Zaman serilerindeki eğilim etkisini daha karmaşık modeller ile de bulabiliriz. Doğrusal olmayan eğilimleri yakalamak için polinomik regresyon, lojistik regresyon veya zaman serisi analizi gibi yöntemler kullanılabilir.
+
+### *2.1.15 Sezonsallık Etkisi*
+
+Mevsimsellik periyodik dalgalanmaları ifade eder. Mevsimsel bir seri, N’nin belirli bir değeri için her N periyodunu tekrarlayan
+bir desene sahip olan bir seridir. Desenin sezonun uzunluğu olarak tekrarlanmaya başlamasından önceki dönemlerin sayısını belirtir.
+Mevsimsel modeli kullanmak için, Sezonun uzunluğunu belirtebilir.
+Zaman serilerinde mevsimsellikten bahsederken sadece mevsimsel etkilerden kaynaklanan değişikliklerden bahsedemeyiz elbetteki.
+Dondurma satışlarının yazın yüksek oluşu dışında, Blackfriday gibi her yıl kasım ayının belirli günlerinde yapılan kampanyalar 
+da mevsimsel dalgalanmalara yol açabilir.
+
+Sabit Seriler(Stationary) İçin Mevsimsel Faktörler:
+
+*_1._* Tüm verilerin örnek ortalamasını hesaplayın.
+
+*_2._* Her bir gözlemi örnek ortalamasına bölün. Bu, gözlemlenen verilerin her dönemi için mevsimsel faktörler verir.
+
+*_3._* Her mevsimdeki benzer dönemler için ortalama faktörler, yani bir sezonun ilk dönemine karşılık gelen tüm faktörler, sezonun ikinci dönemine karşılık gelen tüm faktörler ve diğerleri.
+
+Sezonsallık etkisinin tahmini için aşağıdaki formül kullanılır:
+
+$$Y(t) = T(t) + S(t) + E(t)$$
+
+$Y(t)$: zaman serisindeki gözlemlenen değerlerin vektörüdür.
+
+$T(t)$: trend bileşenini ifade eden fonksiyondur. Trend, zaman serisinin genel eğilimini temsil eder.
+
+$S(t)$: sezonsal bileşeni ifade eden fonksiyondur. Sezonsal bileşen, periyodik desenleri veya tekrarlanan modelleri temsil eder.
+
+$E(t)$: hata veya rastgele bileşeni. Trend ve sezonsal bileşenin dışındaki diğer faktörleri ve rastgele değişimleri yakalar.
+
+Bazı durumlarda, çarpansal (multiplicative) bir model de kullanılabilir, bu durumda formül şu şekilde ifade edilir:
+
+$$Y(t) = T(t) * S(t) * E(t)$$
+
+### *2.1.16 Düzensiz Hareketler*
+
+üzensiz(beklenmedik) hareketler,zaman serisi verilerinin unsurlarından biridir.
+Düzensiz hareketler, tesadüfi bir değişken niteliğindedir. Uzun dönem eğilimi, devresel hareketler ve mevsimlik dalgalanmalar
+zaman serisi verilerinden uzaklaştırıldığında geriye kalan kısım “düzensiz (beklenmedik) değişim” dir. 
+Bu dalgalanmalar, grev, deprem, fırtına, sel vb gibi tahmin edilemeyen belirsiz olayların gelişmesinden kaynaklanmaktadır.
+Bu tip belirsiz olaylar malların üretimi ve dağıtımı gibi birçok şeyi etkilemektedir. Düzensiz hareketler, belirsiz olaylar 
+olduğundan bunu tahmin etmek mümkün değildir.
+Bununla birlikte, düzensiz hareketlerin genellikle zaman serisi analizindeki modellere eklenen hata terimi veya rastgele bileşen 
+tarafından temsil edildiğini söyleyebiliriz. Bu hata terimi, trend veya sezonsallıkla ilişkili olmayan, sistemli olmayan ve tahmin
+edilemeyen varyasyonları yakalar.
+Genel olarak, bir zaman serisindeki gözlemlenen değerler, trend bileşeni, sezonsal bileşen ve hata terimi (düzensiz hareketler)
+olmak üzere üç bileşene ayrılabilir:
+
+$$Y(t) = T(t) + S(t) + E(t)$$
+
+$Y(t)$: zaman serisindeki gözlemlenen değerlerin vektörüdür.
+
+$T(t)$: trend bileşenini ifade eden fonksiyondur.
+
+$S(t)$: sezonsal bileşeni ifade eden fonksiyondur.
+
+$E(t)$: hata veya rastgele bileşeni ifade eden fonksiyondur.Düzensiz hareketleri yakalar ve tahmin edilemeyen dalgalanmaları temsil eder.
+
+### *2.1.17 ARIMA İçin Forecasting*
+
+ARIMA hataları içeren bir regresyon modeli kullanarak forecasting yapmak için, modelin regresyon kısmını ve
+modelin ARIMA kısmını tahmin etmemiz ve sonuçları birleştirmemiz gerekir. Sıradan regresyon modellerinde
+olduğu gibi, forecastleri elde etmek için önce açıklayıcı değişkenleri tahmin etmemiz gerekir. Açıklayıcı
+değişkenler gelecekte bilindiğinde (örneğin, zaman, haftanın günü vb. Takvimle ilgili değişkenler), bu basittir.
+Ancak açıklayıcı eğişkenlerin gelecek değerleri bilinmediğinde, onları ayrı ayrı modellemeliyiz veya her bir
+tahminci için gelecekteki varsayılan değerleri kullanmalıyız.
+
+\newpage 
+
+# **BÖLÜM 3**
+
+## *3.1 Veri Tanıtımı*
+
+Bu çalışma kapsamında doğalgaz tüketim verisi İstanbul
+ilinde hizmet veren İstanbul Gaz Dağıtım Sanayi ve Ticaret Anonim Şirketi (İGDAŞ)
+veritabanları üzerinden hazırlanmış ve İstanbul Büyükşehir Belediyesine iletilmiş olup, onlar tarafından halka açık olan 
+İBB Veri Portalı sitesinden elde edilmiştir. 
+Veri seti İstanbulun 39 ilçesi baz alınarak oluşturulmuştur. 2023 Yılı hariç, diğer bütün dönemlerde ilçelere ait 12 aylık harcama
+verileri mevcuttur.
+
+Veri seti saf halinde 4 satırdan oluşmaktadır. Bunlar Yıl, Ay No, İlçe ve Doğalgaz Tüketim Miktarı (m3).
+
+$Yıl$ <- Doğalgazın harcandığı yıla ait bilgi.
+
+$Ay No$ <- Doğalgazın harcandığı yılın ay değerlerine ait bilgi.
+
+$İlçe$ <- Doğalgaz harcamalarının hangi ilçelere ait olduğunu temsil eden değişken.
+
+$Dogalgaz Tüketim Miktarı (m3)$ <- Metre küp cinsinden belirlenmiş dönemlere ait harcanan doğalgaz değerleri.
+
+Veriler İGDAŞ tarafından 2015 Ocak ayı ile 2023 Nisan ayı arasında listelenmiştir. 
+
+## *3.2 Veri Analizi*
+
+```{r, include=FALSE, warning=FALSE, message=FALSE}
+library(readxl)
+library(plotly)
+library(dplyr)
+library(fpp2)
+library(ggplot2)
+library(urca)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+library(stringr)
+#library(kableExtra)
+library(patchwork)
+library(gridExtra)
+library(viridis)
+library(urca)
+library(ggthemes)
+library(lubridate)
+library(forecast)
+df <- read_excel("C:/Users/emre-/Downloads/ilce-baznda-aylk-doalgaz-tuketim-miktar-2015-2023-nisan.xlsx")
+```
+
+```{r, echo=FALSE}
+tibble(df)
+tail(df,10)
+summary(df)
+```
+
+Verimizin ilk 10 ve son 10 gözleminden hangi tarihler arasında olduğu gösterilmiştir. 
+Görüldüğü gibi veri seti 3900 satır ve 4 sütundan oluşmaktadır. 
+Doğalgaz Tüketim değişkenimizin özelliklerini inceleyecek olursak, [28832, 79742863] değerleri arasında,
+14063417 ortalamaya sahip bir değişkendir. 
+
+### *3.2.1 Yıllara Göre Toplam Doğalgaz Tüketiminin Bar Grafiği*
+
+```{r, echo=FALSE}
+yıllaragore <- df %>%
+  group_by(Yıl) %>%
+  summarise(Toplamtüketim = sum(`Dogalgaz Tüketim Miktarı (m3)`))
+
+fig <- plot_ly(
+  x = yıllaragore$Yıl,
+  y = yıllaragore$Toplamtüketim,
+  name = "SF Zoo",
+  type = "bar",
+  marker = list(color = 'rgb(158,202,225)',
+                      line = list(color = 'rgb(8,48,107)',
+                                  width = 1.5))
+)
+fig
+```
+
+Yıllara göre toplam tüketim miktarı incelendiği zaman 2022 yılında ve 2021 yılında en yüksek harcamalar olduğu söylenebilir.
+Bunun sebebi farklı konular olabilir. Sıcaklık, doğalgaz fiyatı, abone sayısı gibi konulardan ziyade bu yıllar için pandemi etkisi 
+göz önünde bulundurulabilir. Daha detaylı düşüncek olursak, 2020 yılından sonra çalışma stili olarak remote çalışma sistemi
+daha çok tercih edilmeye başlamıştır ve bu durum insanların doğalgaz tüketim harcamasını etkilediği düşünülebilir. 
+2023 yılının ilk 4 aynı veri setinde dahil olduğu için diğer yıllara göre düşük bir değer gözükmektedir.
+
+### *3.2.2 Aylara Göre Toplam doğalgaz Tüketiminin Bar Grafiği*
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+df2 <- filter(df,df$Yıl != 2023)
+aylaragore <- df2 %>%
+  group_by(`Ay No`) %>%
+  summarise(Toplamtüketim = sum(`Dogalgaz Tüketim Miktarı (m3)`))
+
+fig <- plot_ly(
+  x = aylaragore$`Ay No` ,
+  y = aylaragore$Toplamtüketim,
+  name = "SF Zoo",
+  type = "bar",
+  marker = list(color = 'rgb(158,202,225)',
+                      line = list(color = 'rgb(8,48,107)',
+                                  width = 1.5))
+)
+fig
+```
+
+Yıllara göre 2023 yılı ayrı tutularak daha detaylı inceleyecek olarasak eğer aylara göre harcamalarda 
+ilk 3 ay ve son 1 ayda yüksek doğalgaz tüketimi mevcuttur, bunun sebebi kış ayları olduğu için olabilir. 
+
+
+```{r, warning=FALSE, echo=FALSE}
+istanbul_ilceler <- data.frame(
+  İlçe = c("ADALAR", "ARNAVUTKÖY", "ATAŞEHİR", "AVCILAR", "BAĞCILAR", "BAHÇELİEVLER", "BAKIRKÖY", "BAŞAKŞEHİR",
+"BAYRAMPAŞA", "BEŞİKTAŞ", "BEYKOZ", "BEYLİKDÜZÜ", "BEYOĞLU", "BÜYÜKÇEKMECE", "ÇATALCA", "ÇEKMEKÖY",
+"ESENLER", "ESENYURT", "EYÜP", "FATİH", "GAZİOSMANPAŞA", "GÜNGÖREN", "KADIKÖY", "KAĞITHANE",
+"KARTAL", "KÜÇÜKÇEKMECE", "MALTEPE", "PENDİK", "SANCAKTEPE", "SARIYER", "SİLİVRİ", "SULTANBEYLİ",
+"SULTANGAZİ", "ŞİLE", "ŞİŞLİ", "TUZLA", "ÜMRANİYE", "ÜSKÜDAR", "ZEYTİNBURNU"),
+  Enlem = c(40.8760, 41.1840, 40.9833, 40.9801, 41.0330, 41.0000, 40.9767, 41.0975, 41.0358, 41.0428, 41.1231,
+            41.0015, 41.0365, 41.0155, 41.1417, 41.0151, 41.0341, 41.0426, 41.0524, 41.0106, 41.1071, 41.0209,
+            40.9790, 41.0836, 40.8986, 41.0008, 40.9528, 40.8822, 41.0069, 41.1706,  41.0736, 41.1167, 41.1666,
+            41.0215, 41.0906, 41.0214, 41.0454, 40.9839, 40.9882),
+  Boylam = c(29.0903, 28.7414, 29.1278, 28.7170, 28.8589, 28.8724, 28.8675, 28.8062, 28.9122, 29.0076, 29.1034,
+             28.6415, 28.9859, 28.5903, 28.4637, 29.1760, 28.8960, 28.6806, 28.9302, 28.9609, 28.9076, 28.8709,
+             29.0289, 28.9537, 29.1950, 28.7839, 29.1164, 29.2137,  29.2166, 29.0544, 28.2462, 28.8829, 28.9018,
+             29.2970, 28.9886, 29.0938, 29.2668, 29.0912, 28.9033)
+)
+ilceleregöreharcamalar2 <- df %>%
+  group_by(İlçe) %>%
+  summarise(Toplamtüketim = sum(`Dogalgaz Tüketim Miktarı (m3)`))
+```
+
+### *3.2.3 İstanbul'un İlçeleri İçin Toplam Doğalgaz Tüketiminin Harita Gösterimi*
+
+```{r, warning=FALSE, echo=FALSE}
+yeni_df <- merge(ilceleregöreharcamalar2, istanbul_ilceler, by="İlçe")
+fig <- yeni_df %>%
+  plot_ly(
+    size = ~Toplamtüketim,
+    color = ~İlçe, 
+    colors = c("#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF"),  # Renk skalasını daha belirgin renklerle oluşturuyoruz
+    opacity = 0.8,
+    lat = ~Enlem,
+    lon = ~Boylam,
+    type = 'scattermapbox',
+    text = ~paste(İlçe, "<br>", "Toplam Tüketim:", Toplamtüketim),
+    hoverinfo = 'text',
+    mode = 'markers'
+  ) %>%
+  layout(
+    mapbox = list(
+      style = 'stamen-terrain',
+      zoom = 8,
+      center = list(lon = 28.9784, lat = 41.0082)
+    )
+  )
+fig
+```
+
+İstanbul geneli için 2015 yılından 2023 Nisan ayına kadar olan toplam tüketim verileri ile yapılan görselleştirmede,
+hangi ilçenin ne kadar çok harcama yaptığını sahip oldukları noktaların büyüklüğünden anlaşılabilir. 
+Daha detaylı  inceleme için imleç ile harita üzerine gidildiği zaman hangi ilçe ve ne kadar toplam tüketime sahip olduğu görülmektedir.
+Sağ tarafta bulunan ilçe listesinden ilçeleri çıkartıp ekleyebiliriz. 
+
+```{r, warning=FALSE,message=FALSE, echo=FALSE}
+# Veri seti oluşturma
+İlçeler <- c("ADALAR","ARNAVUTKÖY","ATAŞEHİR","AVCILAR","BAĞCILAR","BAHÇELİEVLER","BAKIRKÖY","BAŞAKŞEHİR","BAYRAMPAŞA","BEŞİKTAŞ","BEYKOZ","BEYLİKDÜZÜ",
+             "BEYOĞLU","BÜYÜKÇEKMECE","ÇATALCA","ÇEKMEKÖY","ESENLER","ESENYURT","EYÜPSULTAN","FATİH","GAZİOSMANPAŞA","GÜNGÖREN","KADIKÖY","KAĞITHANE","KARTAL","KÜÇÜKÇEKMECE",
+             "MALTEPE","PENDİK","SANCAKTEPE","SARIYER","SİLİVRİ","SULTANBEYLİ","SULTANGAZİ","ŞİLE","ŞİŞLİ","TUZLA","ÜMRANİYE","ÜSKÜDAR","ZEYTİNBURNU")
+
+Kıta <- c("Asya","Avrupa","Asya","Avrupa","Avrupa","Avrupa","Avrupa","Avrupa","Avrupa","Avrupa","Asya","Avrupa","Avrupa",
+          "Avrupa","Avrupa","Asya","Avrupa","Avrupa","Avrupa","Avrupa","Avrupa","Avrupa","Asya",
+          "Avrupa","Asya","Avrupa","Asya","Asya","Asya","Avrupa","Avrupa","Asya","Avrupa","Asya",
+          "Avrupa","Asya","Asya","Asya","Avrupa")
+```
+
+```{r, warning=FALSE,message=FALSE, echo=FALSE}
+veri <- data.frame(İlçeler, Kıta)
+df$Kıta <- Kıta[match(df$İlçe, veri$İlçeler)]  
+```
+
+```{r, warning=FALSE,message=FALSE, echo=FALSE}
+# Avrupa kıtasını içeren veri seti
+Avrupa <- subset(veri, Kıta == "Avrupa")
+
+# Asya kıtasını içeren veri seti
+Asya <- subset(veri, Kıta == "Asya")
+```
+
+```{r, warning=FALSE,message=FALSE, echo=FALSE}
+#Avrupa kıtasındaki ilçeler için her yılın toplamı
+avrupa_ilce_tuketim <- df %>%
+  filter(Kıta == "Avrupa") %>%
+  mutate(İlçe = toupper(İlçe)) %>%
+  group_by(İlçe, Yıl) %>%
+  summarise(Tuketim = sum(`Dogalgaz Tüketim Miktarı (m3)`))
+```
+
+### *3.2.4 Avrupa Kıtası İçin Doğalgaz Tüketiminin Yıllara Göre Bar Grafiği*
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+options(scipen = 10)
+avrupa_grafik <- ggplot(avrupa_ilce_tuketim, aes(x = avrupa_ilce_tuketim$Yıl, y = avrupa_ilce_tuketim$Tuketim, fill = İlçe)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Yıl", y = "Tüketim Miktarı", fill = "İlçe") +
+  ggtitle("Avrupa Kıtasında İlçelere Göre Doğalgaz Tüketim Miktarı") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+ggplotly(avrupa_grafik)
+```
+
+İlçeleri *$Avrupa$* ve *$Asya$* kıtasına ayırarak inceleycek olursak,
+hangi kıta da hangi ilçe daha çok doğalgaz tüketim harcamasına sahip görülebilmektedir.
+
+Yıllara göre ayrı ayrı Avrupa kıtası incelendiği zaman ilçelere göre bar grafiğinde
+en fazla alana sahip olan ilçe en yüksek tüketime sahip ilçedir denilebilir.
+En yüksek doğalgaz tüketimi 2022 yılında Esenyurt ilçesi olarak görükmektedir.
+
+
+### *3.2.5 Avrupa Kıtası İçin Doğalgaz Tüketiminin Pasta Grafiği*
+
+```{r, warning=FALSE,message=FALSE, echo=FALSE}
+avrupa_grafik <- plot_ly(avrupa_ilce_tuketim, labels = ~toupper(İlçe), values = ~Tuketim, type = "pie",
+                         textposition = "inside", textinfo = "label+percent",
+                         insidetextfont = list(color = "#FFFFFF")) %>%
+  layout(title = "Avrupa Kıtasında İlçelere Göre Doğalgaz Tüketim Miktarı",
+         showlegend = FALSE,
+         xaxis = list(showticklabels = FALSE), yaxis = list(showticklabels = FALSE))
+avrupa_grafik
+```
+
+Genel olarak Avrupa kıtası için toplam doğalgaz harcamalarını inceleyecek olursak eğer, 
+pasta grafiğine Esenyurt ilçesi %9.83'luk bir yer kaplayarak en yüksek doğalgaz harcamasına 
+sahip ilçe olduğu tespit edilmiştir. En düşük ilçe ise %0,625'luk bir alan kaplayarak Çatalca ilçesi olmuştur.
+
+```{r, warning=FALSE,message=FALSE, echo=FALSE}
+#Asya kıtasındaki ilçeler için her yılın toplamı
+asya_ilce_tuketim <- df %>%
+  filter(Kıta == "Asya") %>%
+  group_by(İlçe, Yıl) %>%
+  summarise(Tuketim = sum(`Dogalgaz Tüketim Miktarı (m3)`))
+```
+
+### *3.2.6 Asya Kıtası İçin Doğalgaz Tüketiminin Yıllara Göre Bar Grafiği*
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+asya_grafik <- ggplot(asya_ilce_tuketim, aes(x = Yıl, y = Tuketim, fill = İlçe)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Yıl", y = "Tüketim Miktarı", fill = "İlçe") +
+  ggtitle("Asya Kıtasında İlçelere Göre Doğalgaz Tüketim Miktarı") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+ggplotly(asya_grafik)
+```
+
+Asya kıtası için ilçeleri ayrı ayrı yıllara göre incelenecek olursa
+Kadıköy ve Pendik ilçesi en yüksek doğalgaz tüketimine sahip ilçelerdir.
+Daha detaylı inceleme için imleçi grafiğin üzerine getirdiğimiz zaman en yüksek doğalgaz
+tüketiminini 2022 yılında Pendik ilçesi gerçekleştirmiştir.
+
+### *3.2.7 Asya kıtası için doğalgaz tüketiminin Pasta Grafiği*
+
+```{r, warning=FALSE,message=FALSE, echo=FALSE}
+asya_grafik <- plot_ly(asya_ilce_tuketim, labels = ~toupper(İlçe), values = ~Tuketim, type = "pie",
+                         textposition = "inside", textinfo = "label+percent",
+                         insidetextfont = list(color = "#FFFFFF")) %>%
+  layout(title = "Asya Kıtasında İlçelere Göre Doğalgaz Tüketim Miktarı",
+         showlegend = FALSE,
+         xaxis = list(showticklabels = FALSE), yaxis = list(showticklabels = FALSE))
+asya_grafik
+```
+
+Genel olarak Asya kıtası için toplam doğalgaz harcamalarını incelenecek olursa, 
+pasta grafiğine Pendik ilçesi %12.9'luk bir yer kaplayarak en yüksek doğalgaz harcamasına sahip 
+ilçe olduğu tespit edilmiştir. En düşük ilçe ise %0,259'luk bir alan kaplayarak Adalar ilçesi olmuştur.
+
+Asya kıtasındaki pasta dağılımı Avrupa kıtasına göre daha yüksek yüzdelik değerlere sahiptir, 
+sebebi ise Asya kıtasında Avrupa kıtasına kıyasla daha az ilçe bulunmasından kaynaklıdır.
+
+
+## *3.3 Modellemeye Hazırlık Aşamaları* 
+
+### *3.3.1 Zaman Serisi Nesnesine Dönüştürme İşlemi*
+
+Veri setimizi 2015'in ilk ayından başlaycak şekilde bir zaman serisi nesnesine dönüştürüp, dağılım grafiğine inceliyoruz.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aylıkTotalharcama <- df %>%
+  group_by(Yıl, `Ay No`) %>%
+  summarise(TotalHarcama = sum(`Dogalgaz Tüketim Miktarı (m3)`))
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+data <- ts(aylıkTotalharcama$TotalHarcama, start = c(2015,1), frequency = 12)
+autoplot(data, color="red")
+```
+
+Verinin dağılımına bakıldığı zaman mevsimsellik var denilebilir. Fakat trendden net bir şekilde bahsedilemez. 
+
+### *3.3.2 Durağanlık kontrolü*
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+ggtsdisplay(data)
+```
+
+Veri setinde ACF ve PACF grafiklerine bakıldığı zaman seri durağan değildir denilmesi mümkündür.
+Seri de otokorelasyon gözükmektedir. Bu durumu da Ljung-Box test ile kontrol etmek gerekir.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+Box.test(data,type = "Ljung-Box")
+```
+
+H0: Otokorelasyon yoktur.
+
+H1: Otokorelasyon vardır.
+
+p-value değeri 5.551e-16 olarak bulunmuştur. 0.05 anlamlılık düzeyinden daha küçük olduğundan H0 hipotezi red edilir. 
+Dolayısıyla otokorelasyon olduğu sonucuna varılır. 
+
+### *3.3.3 Birim Kök Testi*
+
+Durağanlık durumu birim kök test ile de kontrol edilir.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+data %>% ur.kpss() %>% summary() #Durağanlık testi.
+```
+
+Birim kök test testinin çıktısına göre Test-İstatistik değeri 0,0611 tespit edilmiştir. Bu değer tüm kritik değerlerden
+düşük olduğu için seri durağan gözükmektedir.
+
+Mevsimsel gözüken bir serinin aynı zamanda durağan olması söz konusu olan bir durum değildir.
+Bu yüzden bu adımda test kriteri değil de grafikler dikkate alınarak ilerlenmiştir.
+
+
+### *3.3.4 Mevsimsel Fark Alma*
+
+Serimiz durağan çıkmadığı için bir fark alma işlemi yapılması gereklidir. 
+Seri de güçlü bir mevsimselliği varlığı ya da yokluğu aşağıdaki gibi test edilir.
+
+```{r, warning=FALSE, message=FALSE}
+nsdiffs(data)
+```
+
+Çıkan sonuç 1 olduğudan dolayı seri de güçlü bir mevsimsellik vardır denir. Yani mevsimsel bir fark almamız gereklidir.
+
+```{r}
+data_diff <- diff(data, lag = 12)
+nsdiffs(data_diff)
+```
+
+1. Dereceden fark alma işlemi yapıldığı zaman, çıkan sonuç 0 olduğudan dolayı seri durağan hale getirilmiştir.
+
+```{r,warning=FALSE,echo=FALSE,message=FALSE}
+ggtsdisplay(data_diff)
+```
+
+### *3.3.5 Test Seti ve Train Seti Ayrımı*
+
+```{r,warning=FALSE, message=FALSE}
+train <- window(data, end= c(2022,12))
+test <- window(data, start = c(2023,1))
+```
+
+2023 yılının Nisan ayına kadar olan kısmı test seti ve geri kalan kısmı train seti olarak ayrılmıştır.
+
+## *3.4 Arima Modeli*
+
+Arima için aday modelleri araştıracak olursak, grafiklerden ve fark alma işlemlerinden elde edilen bilgilere 
+göre aday modeller ARIMA(2,0,0)(2,0,1), ARIMA(2,0,0)(2,1,1), ARIMA(1,0,0)(2,1,1) ve ARIMA(0,0,0)(2,1,1) modelleri çıkmıştır.
+
+```{r}
+model_arima = Arima(train,order = c(2,0,0),
+                              seasonal = c(2,1,1),
+                              lambda = "auto")
+model_arima
+
+fcast = forecast(model_arima,
+                 h = length(test))
+accuracy(test,fcast$mean)
+```
+
+Aralarında AIC_c değerlerine göre en iyi sonuç veren model ARIMA(2,0,0)(2,1,1)_12 modeli tespit edilmiştir.
+
+
+## *3.5 Auto.arima Modellerinin Oluşturulması*
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+h=length(test)
+mod<- auto.arima(train)
+summary(mod)
+arima_acc <- accuracy(forecast(mod, h)$mean, test)
+arima_acc
+```
+
+Burada auto.arima ile fonksiyonu ile uygun model seçim işlemini gerçekleştirmesini sağlanmıştır.
+AIC_c değeri 3329,6 olan ARIMA(1,0,0)(0,1,1)[12] modelini seçmiştir. Bu modelin test seti üzerindeki 
+performasına bakılacak olursa MAPE değeri 12.67055 çıkmıştır. Burada MAPE değerine bakılmasının sebebi serideki
+değerlerin çok yüksek değerler olmasıdır. 
+
+Auto arimanın modeli daha ayrıntılı tahmin etmesi için $approximation = FALSE, stepwise = FALSE$ parametrelerinin 
+bu şekilde düzenlemesi gereklidir.
+
+```{r, warning=FALSE, message=FALSE}
+mod1<-auto.arima(train,lambda = "auto",approximation = FALSE, stepwise = FALSE) #Burada auto.arima modeli uyguluyoruz. 
+```
+
+```{r, warning=FALSE, message=FALSE,echo=FALSE}
+summary(mod1)
+auto_arima_acc <- accuracy(forecast(mod1,h)$mean,test)
+auto_arima_acc
+```
+
+Gerekli düzenleme yapıldıktan sonra seçilen model ARIMA(1,0,0)(1,1,1)[12] ve AIC_c değeri 790.41 olan model seçilmiştir. 
+İlgili modelin test seti üzerinde ki performansının MAPE değeri 12.11183 olarak hesaplanmıştır.
+Bu adımda hesaplanan model, önceki modele göre daha iyi bir modeldir.
+
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+paste("ARIMA(1,0,0)(1,1,1)[12] modeli için MAPE değeri",accuracy(forecast(mod1,h)$mean,test)[5])
+paste("ARIMA(1,0,0)(0,1,1)[12] modeli için MAPE değeri",accuracy(forecast(mod,h)$mean,test)[5])
+paste("ARIMA(2,0,0)(2,1,1)[12] modeli için MAPE değeri",accuracy(forecast(model_arima,h)$mean,test)[5])
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+model_names <- c("Model Arima", "Model Auto Arima ", "Model Auto Arima Stp ve App")
+mape_values <- c(accuracy(forecast(model_arima,h)$mean,test)[5], accuracy(forecast(mod,h)$mean,test)[5], accuracy(forecast(mod1,h)$mean,test)[5])
+
+data_mape <- data.frame(Model = model_names, MAPE = mape_values)
+
+# Görselleştirme
+plot <- ggplot(data_mape, aes(x = Model, y = MAPE, fill = Model)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  labs(x = "Modeller", y = "MAPE Değerleri", title = "MAPE Değerleri Karşılaştırması") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_viridis_d(option = "magma")
+plot <- ggplotly(plot)
+plot
+```
+
+Genel olarak Arima yöntemleriyle oluşturulan 3 modelden, test seti üzerinde en iyi performansı veren model
+ARIMA(2,0,0)(2,1,1)[12] modeli seçilmiştir.
+
+## *3.6 ARIMA(2,0,0)(2,1,1)[12] İle 12 Adımlık Tahmin Değerleri*
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+tahmin <- forecast(model_arima, h=12)
+tahmin$mean
+```
+
+2023 Yılının tahmin değerleri bu şekilde çıkmıştır. 
+
+## *3.7 Sıcaklık İle Doğalgaz Tüketimi Verisi Arasındaki İlişki*
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+havadurumu <- read.csv("C:/Users/emre-/OneDrive/Masaüstü/Dersler ve İstatistiki şeyler/archive (3).csv")
+library(lubridate)
+library(dplyr)
+havadurumu$time <- ymd_hm(havadurumu$time) #time değişkenini düzenliyoruz
+# Aylık ortalama değerleri hesaplama
+veri_aylik <- havadurumu %>%
+  mutate(Ay = floor_date(time, "month")) %>%
+  group_by(Ay) %>%
+  summarise(Ortalama_Hava_Durumu = mean(temperature_2m...C.)) # Burada saatlik tipte ki veriyi aylık şekline çeviriyoruz.
+
+aylıkTotalharcama$Tarih <- ymd(paste(aylıkTotalharcama$Yıl, aylıkTotalharcama$`Ay No`, "01", sep = "-")) #burada aylıkortalama değerlerinde ki tarihleri düzenledik, yıl ve ayno ları birleştirip tipini düzelttik
+
+aylıkTotalharcama <- as.data.frame(aylıkTotalharcama) #data frame çevirdik
+
+aylıkTotalharcama$Tarih <- as.POSIXct(aylıkTotalharcama$Tarih) #aylıkortalama değlerinde ki tarih sütunun tipini değiştirdik, merge ederken hata olmasın diye
+veri_aylik$Tarih <- veri_aylik$Ay
+
+# Veri çerçevelerini tarihlerine göre birleştirme
+birlesik_veri <- merge(veri_aylik, aylıkTotalharcama, by = "Tarih")
+birlesik_veri<- birlesik_veri[c(3,6)]
+head(birlesik_veri) #2015in 1. ayından başlıyor.
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+library(fpp2)
+data2 <- ts(birlesik_veri, start = c(2015,1), frequency = 12)
+train2 <- window(data2, end= c(2022,12))
+test2 <- window(data2, start = c(2023,1))
+autoplot(train2[,1:2], facets=TRUE) +
+xlab("Year") + ylab("") +
+ggtitle("Hava durumu ve doğalgaz tüketimi")
+```
+
+Hava durumu serisinin autoplot grafiğine bakıldığı zaman bir mevsimsellik olduğu gözükmektedir. 
+2 grafiğe bakılacak olursa aralarında ters bir ilişki olduğu görülebilir. 
+Bunun için aralarındaki korelasyon katsayısına ve nokta grafiğine bakarak inceleyebiliriz.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+correlation <- cor(data2[,1], data2[,2])
+
+# Korelasyon değerini görüntüleme
+print(correlation)
+```
+
+2 Değişken arasında negatif yönde -0.9405073 değerlik güçlü bir ilişki olduğu saptanmıştır.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+plot(x=birlesik_veri[,1], y=birlesik_veri[,2], xlab = "Sıcaklık Değeri", ylab = "Doğalgaz Tüketimi")
+```
+
+İlgili nokta grafiği incelendiği zaman aralarındaki ilişkinin daha da lineer olması beklenir.
+Bu işlemi sıcaklık verisinin logaritmik dönüşünü kullanarak elde edebiliriz.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+plot(x=log(birlesik_veri[,1]), y=birlesik_veri[,2], xlab = "Sıcaklık Değeri", ylab = "Doğalgaz Tüketimi")
+```
+
+İlgli işlem yapıldıktan sonra ilişkinin daha da lineer olduğu gözükmektedir. 
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+correlation <- cor(log(data2[,1]), data2[,2])
+
+# Korelasyon değerini görüntüleme
+print(correlation)
+```
+
+Dönüşüm yapıldıktan sonra aradaki korelasyon değerinin daha da arttığı gözükmektedir.
+
+## *3.8 2022 Yılı İçin Doğalgaz Tüketimi İle Abone Sayısı Verisinin İlişkisi*
+
+### *3.8.1 Doğalgaz Tüketim Verisi İle Abone Sayısı Verisinin Birleştirilmesi*
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+abone<-read_excel("C:/Users/emre-/Downloads/ilcelere-gore-abone-says-1990-2022.xlsx")
+head(abone,10)
+```
+
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+dogalgaz_verisi<-df%>% filter(Yıl==2022)
+
+
+#İlçe sütununu group by yaparak bir ilçedeki toplam doğalgaz miktarını bulalım. Yani bu veri 2022 yılındaki ilçe olarak ayrılmış şekilde her ilçedeki toplam doğalgaz tüketim miktarını alır.
+
+toplam_tuketim <- dogalgaz_verisi %>%
+  filter(Yıl == 2022) %>%
+  group_by(İlçe) %>%
+  summarise(ToplamTüketim = sum(`Dogalgaz Tüketim Miktarı (m3)`)) 
+
+toplam_tuketim
+
+#iki veriyi join yapacağımız için sütun adları aynı olmalı. abone verisinden sütun adını değiştirelim.
+colnames(abone)[colnames(abone) == "İLÇE"] <- "İlçe"
+```
+
+Abone sayısı verisi 2022 yılını kapsadığı için Doğalgaz Tüketim verisi için de sadece 2022 yılı baz alınmıştır.
+İlçe değişkenini kullanarak iki veri setini birleştirelim.
+ 
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+# İki veriyi birleştirme inner join ile yapılır.
+veri <- inner_join(toplam_tuketim, abone, by = "İlçe")
+veri
+```
+
+İstanbul'un 39 ilçesine ait 2022 yılı Doğalgaz tüketim miktarı ve abone sayılarından oluşan tablo görülmektedir.
+
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+# Regresyon modeli;
+
+model <- lm(`ToplamTüketim` ~ `ABONE SAYI`, data = veri)
+model
+
+# Modelin özetine bakalım.
+
+summary(model)
+
+```
+
+Toplam tüketim'i bağımlı değişken alarak abone ve tüketim miktarı arasında regresyon modeli oluşturulmuştur.
+Anlamlılık düzeyleri , regresyon katsayıları, p-değerleri, R-kare değeri ve diğer istatistikleri içerir.
+p-value değeri 2.2e-16 çıkmıştır. Bu değer 0.05 anlamlılık düzeyinden küçük olduğu için model anlamlı çıkmıştır.
+Adj R-kare 0.9051 çıkmıştır. Bu değerin 1'e yakın olması modelin bağımlı değişkendeki varyansın büyük bir kısmını açıkladığını ve aşırı uyumlu olmadığını gösterir. 
+Ancak, ayarlanmış R-kare değeri, tek başına bir modelin iyiliğini tam olarak belirtmez ve başka model değerlendirme yöntemleriyle birlikte kullanılmalıdır.
+
+### *3.8.2 Doğalgaz Tüketim verisi İle Abone Sayısı Verisinin Korelasyonu*
+
+```{r}
+# Korelasyonu hesaplama
+correlation <- cor(veri$`ABONE SAYI`, veri$`ToplamTüketim`)
+
+# Korelasyon değerini görüntüleme
+print(correlation)
+```
+
+Bu şekilde, "veri" veri setindeki "Abone Sayı" ve "Toplam Tüketim" sütunları arasındaki korelasyonu ölçülmüştür. 
+Korelasyon değeri -1 ile 1 arasında bir değer alır, -1 negatif bir ilişkiyi, 1 pozitif bir ilişkiyi ve 0 ilişkisizliği 
+ifade eder. 
+Sonuç olarak 0.9526627 çıktığı için yüksek değer olarak değerlendirebilir. 
+Abone ile Toplam Doğalgaz Tüketimi arasında güçlü yönde pozitif bir ilişki vardır.
+
+### *3.8.3 Doğalgaz Tüketim Verisi İle Abone Sayısı Verisinin Korelasyon Grafiği*
+
+```{r}
+# ggplot2 paketini yükleme
+library(ggplot2)
+
+# Korelasyon grafiğini oluşturma
+ggplot(veri, aes(x = `ABONE SAYI`, y = `ToplamTüketim`)) +
+  geom_point() +
+  labs(x = "Abone Sayısı", y = "Toplam Doğalgaz Tüketimi")
+```
+
+Dağılım: Grafikteki noktaların dağılımı, "Abone Sayısı" ve "Toplam Tüketim" arasındaki ilişki hakkında bize bilgi verir. Eğer noktalar genel olarak yukarı doğru bir eğilim gösteriyorsa, yani "Abone Sayısı" arttıkça "Toplam Tüketim" de artıyorsa, pozitif bir ilişkiden bahsedebiliriz. Ve korelasyon katsayımız da yüksek olduğu için (0.9526) pozitif yönlü güçlü bir ilişkiden bahsetmiştik. 
+Noktalar rastgele dağılmamıştır ve eğim nettir.
+
+Yoğunluk: Grafikte noktaların yoğun olduğu bölgeler ilişkinin gücünü gösterir. Eğer noktalar yoğun bir şekilde bir araya gelmişse, bu belirli bir "Abone Sayısı" aralığındaki "Toplam Tüketim" değerlerinin benzer olduğunu gösterebilir. Bu durumda ilişki daha güçlü olabilir. Eğer noktalar dağılımı daha seyrek ise, ilişki daha zayıf olabilir veya ilişkisizlik söz konusu olabilir. Bu grafikte noktalar birbirine yakındır.
+
+Aykırı Değerler: Grafikteki aykırı noktalar, genel eğilimden belirgin şekilde sapmış veri noktalarını temsil eder. Bu grafikte 2 değerin sapmış olabileceğini söyleyebiliriz.
+
+Veri görselleştirmede Abone ve Toplam Doğalgaz Tüketimi arasında pozitif negatif veya zayıf bir ilişki olup olmadığını grafikten de anlayabilir ve yorumlayabiliriz. Aykırı değerlerin varlığını ve bunun analize etkisine dikkat etmek gereklidir. 
+
+Bu adıma kadar seriler hep aylık şekilde incelenmiştir.
+
+Verinin formatını çeyreklik olarak değiştirip, inceleme yapılmıştır.
+
+## *3.9 Çeyreklik veri İle Zaman Serisi*
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+hesaplaMevsim <- function(yil, ay) {
+  mevsim <- (ay - 1) %/% 3 + 1  # Ayı 3'e böler, bölümün bir fazlası mevsimi belirler
+  return(paste0(yil, "_Q", mevsim))  # Yılı ve mevsimi birleştirip mevsimsel değişkeni döndürür
+}
+
+df$Mevsim <- mapply(hesaplaMevsim, df$Yıl, df$`Ay No`)
+```
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+toplamHarcama <- df %>%
+  group_by(Mevsim) %>%
+  summarise(toplamHarcama = sum(`Dogalgaz Tüketim Miktarı (m3)`))
+toplamHarcama
+```
+
+Toplamsal bir şekilde veri çeyreklik olarak ayrıştırılmıştır.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#veriyi ts atamak için :
+df <- ts(toplamHarcama$toplamHarcama, start = c(2015,1), frequency =4)
+df
+```
+
+2015'in ilk döneminden 2023'ün ilk dönemine kadar veri zaman serisine dönüştürülmüştür. 
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+autoplot(df, color="purple")
+```
+
+Serinin dağılımına bakıldığı zaman dönemsel olarak da bir mevsimsellik gözükmektedir.
+
+### *3.9.1 Durağanlık Kontrolü*
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+ggtsdisplay(df)
+```
+
+Grafik üzerinden otokorelasyon net bir şekilde anlaşılmamaktadır. 
+Bundan dolayı istatistiksel testler ile incelenmelidir.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+Box.test(df, type = "Ljung-Box")
+```
+
+H0: Otokorelasyon yoktur.
+
+H1: Otokorelasyon vardır.
+
+p-value değeri 0.7438 olarak bulunmuştur. 0.05 Anlamlılık düzeyinden daha büyük olduğundan H0 hipotezi red edilemez Dolayısıyla otokorelasyon olmadığı sonucuna varılır.
+
+Bundan dolayı serinin modellemeye uygun olmadığı sonucuna varılır.
+
+\newpage 
+
+# **SONUÇ**
+
+Bu çalışmada ARIMA zaman serisi analiz
+yöntemleri kullanılarak İstanbul ilinin doğal gaz tüketimi tahmin edilmiştir. 
+Veriler 2015 yılı ile 2023 Nisan ayı ve 2022 abone sayılarını kapsamaktadır.
+İstanbul İlçe Bazında Aylık Doğalgaz Tüketim verileri ve Abone Sayıları İstanbul Büyükşehir 
+Belediyesi Açık Veri Portalından temin edilmiştir.
+Bu yöntem yardımıyla elde edilen tahmin sonuçları MAPE performans kıstası yardımıyla
+karşılaştırılmıştır. Bu performans ölçütünü değerlendirmek için 3 adet ARIMA modeli oluşturulmuştur.
+Bu ARIMA modellerinden, test seti üzerinde en iyi performansı ARIMA(2,0,0)(2,1,1)[12] modeli sergilemiştir.
+Abone sayısı ve sıcaklık değişkeni ile doğalgaz tüketim miktarı arasında yüksek bir korelasyon mevcuttur.
+Doğalgaz tüketimini etkileyen faktörler
+arasında doğalgazın fiyatı, alternatif enerji kaynaklarının (petrol, kömür elektrik
+gibi) fiyatları, hava sıcaklığı, abone sayısı gibi değişkenlerde sayılabilir. Bu
+farklı değişkenlere ait verilerin olmayışı ve modellere dahil edilememesi
+çalışmanın kısıtlarından birini oluşturmaktadır. Ülkemizde Aylık bazda
+doğalgaz istatistiklerine ait veri sayısının az oluşu aylık tahmin yapacak
+modellerin oluşturulmasına engel teşkil etmiştir. İleriki çalışmalarda farklı
+değişkenlere ilişkin veriler temin edilerek bu değişkenleri kullanan regresyon
+modelleri oluşturulup tahmin sonuçları karşılaştırılabilir.
+
+\newpage 
+
+# **KAYNAKÇA**
+
+https://www.igdas.istanbul/kaynaktan-eve-dogal-gaz/#:~:text=This%20opens%20in%20a%20new,boru%20hatlar%C4%B1yla%20T%C3%BCrkiye'ye%20ta%C5%9F%C4%B1n%C4%B1r.
+
+https://data.ibb.gov.tr/dataset/ilce-bazinda-aylik-dogalgaz-tuketim-miktari
+
+https://data.ibb.gov.tr/dataset/ilcelere-gore-abone-sayilari
+
+https://dergipark.org.tr/en/download/article-file/30457
+
+https://dergiler.ankara.edu.tr/xmlui;/bitstream/handle/20.500.12575/31130/gorkemyusuftopcu.pdf?sequence=1&isAllowed=y
+
+https://acikerisim.sakarya.edu.tr/bitstream/handle/20.500.12619/76340/T06894.pdf?sequence=1&isAllowed=y
+
+http://nek.istanbul.edu.tr:4444/ekos/TEZ/43349.pdf
+
+https://dergipark.org.tr/en/download/article-file/1793885#:~:text=Tahmin%20sonu%C3%A7lar%C4%B1na%20g%C3%B6re%3B%20e%C5%9Fin%20%C3%A7al%C4%B1%C5%9Fmas%C4%B1,gaz%20kullan%C4%B1m%C4%B1%20etkiledi%C4%9Fi%20tespit%20edilmi%C5%9Ftir.
+
+https://dergipark.org.tr/en/download/article-file/30457
+
+https://open-meteo.com/en/docs/historical-weather-api#latitude=41.07&longitude=28.95&hourly=temperature_2m&timezone=auto
+
+https://www.kaggle.com/code/mykeysid10/natural-gas-price-prediction-using-time-series
+
+https://dergipark.org.tr/en/download/article-file/30457
+
+https://dash.plotly.com/r/interactive-graphing
+
+https://www.kaggle.com/code/soraka/usa-electricity-generation-from-natural-gas-with-r
+
+https://yigitsener.medium.com/veri-biliminde-eksik-kay%C4%B1p-verilere-yakla%C5%9F%C4%B1m-stratejileri-ve-python-pandas-uygulamas%C4%B1-501fbf643795
+
+https://www.proquest.com/docview/2689295472?fromopenview=true&pq-origsite=gscholar
+
+
